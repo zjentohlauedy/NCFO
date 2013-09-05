@@ -1,0 +1,22 @@
+S01
+S02
+test
+tmp
+*.o
+*.bak
+*.tar.bz2
+*.ods
+*.team
+*.txt
+
+# executables
+diffhcstats
+get_player_stats
+get_record
+get_stats_by_type
+lottery
+print_boxscores
+print_lineups
+readhcstats
+schedule
+set_lineups
