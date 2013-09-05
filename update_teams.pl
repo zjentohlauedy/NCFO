@@ -188,47 +188,374 @@ sub sort_players {
 # --$j while $j >= $first && $array->[ $j ] eq $pivot;
 
 
-sub select_kickoff_lineup {
+sub clear_selections {
+
+    my (@players) = @{ $_[0] };
+
+    foreach $player (@players) {
+
+        $player->[5] = 0;
+    }
+}
+
+
+sub find_best_quarterback {
+
+    my (@players) = @{ $_[0] };
+
+    foreach $player (@players) {
+
+        if ( $player->[2] eq "QB" && $player->[5] == 0 ) {
+
+            $player->[5] = 1;
+
+            return $player;
+        }
+    }
+}
+
+sub find_best_halfback {
+
+    my (@players) = @{ $_[0] };
+
+    foreach $player (@players) {
+
+        if ( $player->[2] eq "HB" && $player->[5] == 0 ) {
+
+            $player->[5] = 1;
+
+            return $player;
+        }
+    }
+}
+
+sub find_best_fullback {
+
+    my (@players) = @{ $_[0] };
+
+    foreach $player (@players) {
+
+        if ( $player->[2] eq "FB" && $player->[5] == 0 ) {
+
+            $player->[5] = 1;
+
+            return $player;
+        }
+    }
+}
+
+sub find_best_center {
+
+    my (@players) = @{ $_[0] };
+
+    foreach $player (@players) {
+
+        if ( $player->[2] eq "CR" && $player->[5] == 0 ) {
+
+            $player->[5] = 1;
+
+            return $player;
+        }
+    }
+}
+
+sub find_best_offensive_guard {
+
+    my (@players) = @{ $_[0] };
+
+    foreach $player (@players) {
+
+        if ( $player->[2] eq "OG" && $player->[5] == 0 ) {
+
+            $player->[5] = 1;
+
+            return $player;
+        }
+    }
+}
+
+sub find_best_offensive_tackle {
+
+    my (@players) = @{ $_[0] };
+
+    foreach $player (@players) {
+
+        if ( $player->[2] eq "OT" && $player->[5] == 0 ) {
+
+            $player->[5] = 1;
+
+            return $player;
+        }
+    }
+}
+
+sub find_best_tight_end {
+
+    my (@players) = @{ $_[0] };
+
+    foreach $player (@players) {
+
+        if ( $player->[2] eq "TE" && $player->[5] == 0 ) {
+
+            $player->[5] = 1;
+
+            return $player;
+        }
+    }
+}
+
+sub find_best_wide_receiver {
+
+    my (@players) = @{ $_[0] };
+
+    foreach $player (@players) {
+
+        if ( $player->[2] eq "WR" && $player->[5] == 0 ) {
+
+            $player->[5] = 1;
+
+            return $player;
+        }
+    }
+}
+
+sub find_best_defensive_tackle {
+
+    my (@players) = @{ $_[0] };
+
+    foreach $player (@players) {
+
+        if ( $player->[2] eq "DT" ||
+             $player->[2] eq "NT"    ) {
+
+            if ( $player->[5] == 0 ) {
+
+                $player->[5] = 1;
+
+                return $player;
+            }
+        }
+    }
+}
+
+sub find_best_defensive_end {
+
+    my (@players) = @{ $_[0] };
+
+    foreach $player (@players) {
+
+        if ( $player->[2] eq "DE" && $player->[5] == 0 ) {
+
+            $player->[5] = 1;
+
+            return $player;
+        }
+    }
+}
+
+sub find_best_linebacker {
+
+    my (@players) = @{ $_[0] };
+
+    foreach $player (@players) {
+
+        if ( $player->[2] eq "LB" && $player->[5] == 0 ) {
+
+            $player->[5] = 1;
+
+            return $player;
+        }
+    }
+}
+
+sub find_best_cornerback {
+
+    my (@players) = @{ $_[0] };
+
+    foreach $player (@players) {
+
+        if ( $player->[2] eq "CB" && $player->[5] == 0 ) {
+
+            $player->[5] = 1;
+
+            return $player;
+        }
+    }
+}
+
+sub find_best_safety {
+
+    my (@players) = @{ $_[0] };
+
+    foreach $player (@players) {
+
+        if ( $player->[2] eq "DB" && $player->[5] == 0 ) {
+
+            $player->[5] = 1;
+
+            return $player;
+        }
+    }
+}
+
+
+sub select_offense_lineup {
 
     my (@players) = @{ $_[0] };
     my (@lineup)  = ( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
 
-    # First the Big Dudes...
+    my $quarterback  = find_best_quarterback(      \@players );
+    my $halfback     = find_best_halfback(         \@players );
+    my $fullback     = find_best_fullback(         \@players );
+    my $center       = find_best_center(           \@players );
+    my $left_guard   = find_best_offensive_guard(  \@players );
+    my $right_guard  = find_best_offensive_guard(  \@players );
+    my $left_tackle  = find_best_offensive_tackle( \@players );
+    my $right_tackle = find_best_offensive_tackle( \@players );
+    my $tight_end    = find_best_tight_end(        \@players );
+    my $split_end    = find_best_wide_receiver(    \@players );
+    my $flanker      = find_best_wide_receiver(    \@players );
+
+    # OT  OG  CR  OG  OT  TE  SE  HB  FB  FL  QB
+    $lineup[ 0] = $left_tackle;
+    $lineup[ 1] = $left_guard;
+    $lineup[ 2] = $center;
+    $lineup[ 3] = $right_guard;
+    $lineup[ 4] = $right_tackle;
+    $lineup[ 5] = $tight_end;
+    $lineup[ 6] = $split_end;
+    $lineup[ 7] = $halfback;
+    $lineup[ 8] = $fullback;
+    $lineup[ 9] = $flanker;
+    $lineup[10] = $quarterback;
+
+    clear_selections( \@players );
+
+    return \@lineup;
+}
+
+
+sub select_34defense_lineup {
+
+    my (@players) = @{ $_[0] };
+    my (@lineup)  = ( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
+
+    my $nose_tackle   = find_best_defensive_tackle( \@players );
+    my $left_end      = find_best_defensive_end(    \@players );
+    my $right_end     = find_best_defensive_end(    \@players );
+    my $left_olb      = find_best_linebacker(       \@players );
+    my $left_ilb      = find_best_linebacker(       \@players );
+    my $right_ilb     = find_best_linebacker(       \@players );
+    my $right_olb     = find_best_linebacker(       \@players );
+    my $left_corner   = find_best_cornerback(       \@players );
+    my $right_corner  = find_best_cornerback(       \@players );
+    my $free_safety   = find_best_safety(           \@players );
+    my $strong_safety = find_best_safety(           \@players );
+
+    # DE  NT  DE  LB  LB  LB  LB  CB  DB  DB  CB
+    $lineup[ 0] = $left_end;
+    $lineup[ 1] = $nose_tackle;
+    $lineup[ 2] = $right_end;
+    $lineup[ 3] = $left_olb;
+    $lineup[ 4] = $left_ilb;
+    $lineup[ 5] = $right_ilb;
+    $lineup[ 6] = $right_olb;
+    $lineup[ 7] = $left_corner;
+    $lineup[ 8] = $free_safety;
+    $lineup[ 9] = $strong_safety;
+    $lineup[10] = $right_corner;
+
+    clear_selections( \@players );
+
+    return \@lineup;
+}
+
+
+sub select_43defense_lineup {
+
+    my (@players) = @{ $_[0] };
+    my (@lineup)  = ( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
+
+    my $left_tackle   = find_best_defensive_tackle( \@players );
+    my $right_tackle  = find_best_defensive_tackle( \@players );
+    my $left_end      = find_best_defensive_end(    \@players );
+    my $right_end     = find_best_defensive_end(    \@players );
+    my $left_olb      = find_best_linebacker(       \@players );
+    my $middle_lb     = find_best_linebacker(       \@players );
+    my $right_olb     = find_best_linebacker(       \@players );
+    my $left_corner   = find_best_cornerback(       \@players );
+    my $right_corner  = find_best_cornerback(       \@players );
+    my $free_safety   = find_best_safety(           \@players );
+    my $strong_safety = find_best_safety(           \@players );
+
+    # DE  DT  DT  DE  LB  LB  LB  CB  DB  DB  CB
+    $lineup[ 0] = $left_end;
+    $lineup[ 1] = $left_tackle;
+    $lineup[ 2] = $right_tackle;
+    $lineup[ 3] = $right_end;
+    $lineup[ 4] = $left_olb;
+    $lineup[ 5] = $middle_lb;
+    $lineup[ 6] = $right_olb;
+    $lineup[ 7] = $left_corner;
+    $lineup[ 8] = $free_safety;
+    $lineup[ 9] = $strong_safety;
+    $lineup[10] = $right_corner;
+
+    clear_selections( \@players );
+
+    return \@lineup;
+}
+
+
+sub add_player_to_ranked_list {
+
+    my ($list)   = $_[0];
+    my ($player) = $_[1];
+    my ($size)   = $_[2];
+
+    for ( $i = 0; $i < $size; $i++ ) {
+
+        if ( $player != 0 ) {
+
+            if ( $list->[$i] == 0 ) {
+
+                $list->[$i] = $player;
+
+                $player = 0;
+            }
+            else {
+
+                if ( $player->[3] > $list->[$i]->[3] ) {
+
+                    my $x;
+
+                    $x          = $list->[$i];
+                    $list->[$i] = $player;
+                    $player     = $x;
+                }
+            }
+        }
+    }
+}
+
+sub select_kickoff_lineup {
+
+    my (@players) = @{ $_[0] };
+    my ($kicker)  = $_[1];
+    my (@big)     = ( 0, 0, 0, 0, 0, 0 );
+    my (@fast)    = ( 0, 0, 0, 0 );
+    my (@lineup)  = ( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
+
     foreach $player (@players) {
 
 	if ( $player->[2] eq "FB" ||
 	     $player->[2] eq "TE" ||
 	     $player->[2] eq "LB"    ) {
 
-	    my $temp = $player;
-
-	    for ( $i = 0; $i < 6; $i++ ) {
-
-		if ( $temp != 0 ) {
-
-		    if ( @lineup[$i] == 0 ) {
-
-			$lineup[$i] = $temp;
-
-			$temp = 0;
-		    }
-		    else {
-
-			if ( $temp->[3] > $lineup[$i]->[3] ) {
-
-			    my $x;
-
-			    $x          = $lineup[$i];
-			    $lineup[$i] = $temp;
-			    $temp       = $x;
-			}
-		    }
-		}
-	    }
+            add_player_to_ranked_list( \@big, $player, 6 );
 	}
     }
 
-    # Next the Speedy Dudes...
     foreach $player (@players) {
 
 	if ( $player->[2] eq "HB" ||
@@ -236,36 +563,213 @@ sub select_kickoff_lineup {
 	     $player->[2] eq "CB" ||
 	     $player->[2] eq "DB"    ) {
 
-	    my $temp = $player;
-
-	    for ( $i = 6; $i < 10; $i++ ) {
-
-		if ( $temp != 0 ) {
-
-		    if ( @lineup[$i] == 0 ) {
-
-			$lineup[$i] = $temp;
-
-			$temp = 0;
-		    }
-		    else {
-
-			if ( $temp->[3] > $lineup[$i]->[3] ) {
-
-			    my $x;
-
-			    $x          = $lineup[$i];
-			    $lineup[$i] = $temp;
-			    $temp       = $x;
-			}
-		    }
-		}
-	    }
+            add_player_to_ranked_list( \@fast, $player, 4 );
 	}
     }
 
+    # SP  SP  SZ  SZ  SZ  SZ  SZ  SZ  SP  SP  KI
+    $lineup[ 0] = $fast[0];
+    $lineup[ 1] = $fast[3];
+    $lineup[ 2] =  $big[5];
+    $lineup[ 3] =  $big[3];
+    $lineup[ 4] =  $big[0];
+    $lineup[ 5] =  $big[1];
+    $lineup[ 6] =  $big[2];
+    $lineup[ 7] =  $big[4];
+    $lineup[ 8] = $fast[2];
+    $lineup[ 9] = $fast[1];
+    $lineup[10] = $kicker;
+
     return \@lineup;
 }
+
+
+sub select_punt_lineup {
+
+    my (@players) = @{ $_[0] };
+    my ($punter)  =    $_[1];
+    my (@lineup)  = ( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
+
+    my $center       = find_best_center(           \@players );
+    my $left_guard   = find_best_offensive_guard(  \@players );
+    my $right_guard  = find_best_offensive_guard(  \@players );
+    my $left_tackle  = find_best_offensive_tackle( \@players );
+    my $right_tackle = find_best_offensive_tackle( \@players );
+    my $left_end     = find_best_tight_end(        \@players );
+    my $right_end    = find_best_tight_end(        \@players );
+    my $left_gunner  = find_best_wide_receiver(    \@players );
+    my $right_gunner = find_best_wide_receiver(    \@players );
+    my $halfback     = find_best_halfback(         \@players );
+
+    # TE  OT  OG  CR  OG  OT  TE  WR  HB  WR  PU
+    $lineup[ 0] = $left_end;
+    $lineup[ 1] = $left_tackle;
+    $lineup[ 2] = $left_guard;
+    $lineup[ 3] = $center;
+    $lineup[ 4] = $right_guard;
+    $lineup[ 5] = $right_tackle;
+    $lineup[ 6] = $right_end;
+    $lineup[ 7] = $left_gunner;
+    $lineup[ 8] = $halfback;
+    $lineup[ 9] = $right_gunner;
+    $lineup[10] = $punter;
+
+    clear_selections( \@players );
+
+    return \@lineup;
+}
+
+
+sub select_kickoff_return_lineup {
+
+    my (@players) = @{ $_[0] };
+    my (@big)     = ( 0, 0, 0, 0, 0 );
+    my (@med)     = ( 0, 0, 0, 0 );
+    my (@ret)     = ( 0, 0 );
+    my (@lineup)  = ( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
+
+    foreach $player (@players) {
+
+	if ( $player->[2] eq "CR" ||
+	     $player->[2] eq "OG" ||
+	     $player->[2] eq "OT" ||
+	     $player->[2] eq "DE" ||
+	     $player->[2] eq "DT" ||
+	     $player->[2] eq "NT"    ) {
+
+            add_player_to_ranked_list( \@big, $player, 5 );
+	}
+    }
+
+    foreach $player (@players) {
+
+	if ( $player->[2] eq "FB" ||
+	     $player->[2] eq "TE" ||
+	     $player->[2] eq "LB"    ) {
+
+            add_player_to_ranked_list( \@med, $player, 4 );
+	}
+    }
+
+    foreach $player (@players) {
+
+	if ( $player->[2] eq "HB" ||
+	     $player->[2] eq "WR" ||
+	     $player->[2] eq "CB" ||
+	     $player->[2] eq "DB"    ) {
+
+            add_player_to_ranked_list( \@ret, $player, 2 );
+	}
+    }
+
+    # LG  LG  LG  LG  LG  MD  MD  MD  MD  KR  KR
+    $lineup[ 0] = $big[3];
+    $lineup[ 1] = $big[2];
+    $lineup[ 2] = $big[0];
+    $lineup[ 3] = $big[1];
+    $lineup[ 4] = $big[4];
+    $lineup[ 5] = $med[1];
+    $lineup[ 6] = $med[0];
+    $lineup[ 7] = $med[2];
+    $lineup[ 8] = $med[3];
+    $lineup[ 9] = $ret[1];
+    $lineup[10] = $ret[0];
+
+    return \@lineup;
+}
+
+
+sub select_fieldgoal_lineup {
+
+    my (@players) = @{ $_[0] };
+    my ($kicker)  =    $_[1];
+    my (@lineup)  = ( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
+
+    my $center       = find_best_center(           \@players );
+    my $left_guard   = find_best_offensive_guard(  \@players );
+    my $right_guard  = find_best_offensive_guard(  \@players );
+    my $left_tackle  = find_best_offensive_tackle( \@players );
+    my $right_tackle = find_best_offensive_tackle( \@players );
+    my $left_end     = find_best_tight_end(        \@players );
+    my $right_end    = find_best_tight_end(        \@players );
+    my $left_wing    = find_best_fullback(         \@players );
+    my $right_wing   = find_best_fullback(         \@players );
+    my $quarterback  = find_best_quarterback(      \@players );
+
+    # TE  OT  OG  CR  OG  OT  TE  FB  FB  QB  KI
+    $lineup[ 0] = $left_end;
+    $lineup[ 1] = $left_tackle;
+    $lineup[ 2] = $left_guard;
+    $lineup[ 3] = $center;
+    $lineup[ 4] = $right_guard;
+    $lineup[ 5] = $right_tackle;
+    $lineup[ 6] = $right_end;
+    $lineup[ 7] = $left_wing;
+    $lineup[ 8] = $right_wing;
+    $lineup[ 9] = $quarterback;
+    $lineup[10] = $kicker;
+
+    clear_selections( \@players );
+
+    return \@lineup;
+}
+
+
+sub select_punt_return_lineup {
+
+    my (@players) = @{ $_[0] };
+    my (@big)     = ( 0, 0, 0, 0, 0, 0 );
+    my (@med)     = ( 0, 0 );
+    my (@fast)    = ( 0, 0, 0 );
+    my (@lineup)  = ( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
+
+    foreach $player (@players) {
+
+	if ( $player->[2] eq "LB" ||
+	     $player->[2] eq "DE" ||
+	     $player->[2] eq "DT" ||
+	     $player->[2] eq "NT"    ) {
+
+            add_player_to_ranked_list( \@big, $player, 6 );
+	}
+    }
+
+    foreach $player (@players) {
+
+	if ( $player->[2] eq "FB" ||
+	     $player->[2] eq "TE"    ) {
+
+            add_player_to_ranked_list( \@med, $player, 2 );
+	}
+    }
+
+    foreach $player (@players) {
+
+	if ( $player->[2] eq "HB" ||
+	     $player->[2] eq "WR" ||
+	     $player->[2] eq "CB" ||
+	     $player->[2] eq "DB"    ) {
+
+            add_player_to_ranked_list( \@fast, $player, 3 );
+	}
+    }
+
+    # FS  LG  LG  LG  LG  LG  LG  FS  MD  MD  FS
+    $lineup[ 0] = $fast[1];
+    $lineup[ 1] =  $big[4];
+    $lineup[ 2] =  $big[3];
+    $lineup[ 3] =  $big[0];
+    $lineup[ 4] =  $big[1];
+    $lineup[ 5] =  $big[2];
+    $lineup[ 6] =  $big[5];
+    $lineup[ 7] = $fast[2];
+    $lineup[ 8] =  $med[1];
+    $lineup[ 9] =  $med[0];
+    $lineup[10] = $fast[0];
+
+    return \@lineup;
+}
+
 
 sub find_returner {
 
@@ -339,7 +843,28 @@ sub generate_player {
 }
 
 
-sub generate_team {
+sub print_lineup {
+
+    my ($label)  =    $_[0];
+    my (@lineup) = @{ $_[1] };
+
+    printf $output "%s %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d\n",
+    $label,
+    $lineup[ 0]->[0],
+    $lineup[ 1]->[0],
+    $lineup[ 2]->[0],
+    $lineup[ 3]->[0],
+    $lineup[ 4]->[0],
+    $lineup[ 5]->[0],
+    $lineup[ 6]->[0],
+    $lineup[ 7]->[0],
+    $lineup[ 8]->[0],
+    $lineup[ 9]->[0],
+    $lineup[10]->[0];
+}
+
+
+sub update_team {
 
     my (@players);
     my (@team_values) = @{ $_[0] };
@@ -483,158 +1008,43 @@ sub generate_team {
 	printf $output "%2d %-25s %s %3.1f  \$ %s\n", $player_number, $player_name, $player_position, $player_rating, $player_title;
     }
 
-    #                    OT  OG  CR  OG  OT  TE  WR  HB  FB  WR  QB
-    printf $output ".LO %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d\n",
-    $players[14]->[0],
-    $players[17]->[0],
-    $players[20]->[0],
-    $players[18]->[0],
-    $players[15]->[0],
-    $players[11]->[0],
-    $players[ 7]->[0],
-    $players[ 3]->[0],
-    $players[ 5]->[0],
-    $players[ 8]->[0],
-    $players[ 0]->[0];
+    my @lineup = @{ select_offense_lineup( \@players ) };
+
+    print_lineup( ".LO", \@lineup );
 
     if ( $defense == 34 ) {
 
-	#                    DE  NT  DE  LB  LB  LB  LB  CB  DB  DB  CB
-	printf $output ".LD %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d\n",
-	$players[26]->[0],
-	$players[23]->[0],
-	$players[27]->[0],
-	$players[29]->[0],
-	$players[30]->[0],
-	$players[31]->[0],
-	$players[32]->[0],
-	$players[36]->[0],
-	$players[40]->[0],
-	$players[41]->[0],
-	$players[37]->[0];
+        my @lineup = @{ select_34defense_lineup( \@players ) };
+
+        print_lineup( ".LD", \@lineup );
     }
 
     if ( $defense == 43 ) {
 
-	#                    DE  DT  DT  DE  LB  LB  LB  CB  DB  DB  CB
-	printf $output ".LD %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d\n",
-	$players[27]->[0],
-	$players[23]->[0],
-	$players[24]->[0],
-	$players[28]->[0],
-	$players[31]->[0],
-	$players[32]->[0],
-	$players[33]->[0],
-	$players[36]->[0],
-	$players[40]->[0],
-	$players[41]->[0],
-	$players[37]->[0];
+        my @lineup = @{ select_43defense_lineup( \@players ) };
+
+        print_lineup( ".LD", \@lineup );
     }
 
-    my @lineup = @{ select_kickoff_lineup( \@players ) };
-    #                    SP  SP  SZ  SZ  SZ  SZ  SZ  SZ  SP  SP  KI
-    printf $output ".LK %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d\n",
-    $lineup[6]->[0],
-    $lineup[7]->[0],
-    $lineup[0]->[0],
-    $lineup[1]->[0],
-    $lineup[2]->[0],
-    $lineup[3]->[0],
-    $lineup[4]->[0],
-    $lineup[5]->[0],
-    $lineup[8]->[0],
-    $lineup[9]->[0],
-    $kicker->[   0];
+    my @lineup = @{ select_kickoff_lineup( \@players, $kicker ) };
 
-    #                    TE  OT  OG  CR  OG  OT  TE  WR  HB  WR  PU
-    printf $output ".LP %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d\n",
-    $players[12]->[0],
-    $players[14]->[0],
-    $players[17]->[0],
-    $players[20]->[0],
-    $players[18]->[0],
-    $players[15]->[0],
-    $players[11]->[0],
-    $players[ 7]->[0],
-    $players[ 3]->[0],
-    $players[ 8]->[0],
-    $punter->[     0];
+    print_lineup( ".LK", \@lineup );
 
-    if ( $defense == 34 ) {
+    my @lineup = @{ select_punt_lineup( \@players, $punter ) };
 
-	#                    OT  OG  CR  OG  OT  LB  LB  LB  TE  KR  KR
-	printf $output ".LR %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d\n",
-	$players[14]->[0],
-	$players[17]->[0],
-	$players[20]->[0],
-	$players[18]->[0],
-	$players[15]->[0],
-	$players[29]->[0],
-	$players[30]->[0],
-	$players[31]->[0],
-	$players[11]->[0],
-	$ret_back->[   0],
-	$returner->[   0];
+    print_lineup( ".LP", \@lineup );
 
-	#                    CB  LB  DE  DT  NT  DE  LB  CB  DB  DB  KR
-	printf $output ".LQ %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d\n",
-	($returner->[0] != $players[36]->[0]) ? $players[36]->[0] : $players[38]->[0],
-	$players[29]->[0],
-	$players[26]->[0],
-	$players[23]->[0],
-	$players[24]->[0],
-	$players[27]->[0],
-	$players[30]->[0],
-	$players[37]->[0],
-	($returner->[0] != $players[40]->[0]) ? $players[40]->[0] : $players[42]->[0],
-	$players[41]->[0],
-	$returner->[   0];
-    }
+    my @lineup = @{ select_kickoff_return_lineup( \@players ) };
 
-    if ( $defense == 43 ) {
+    print_lineup( ".LR", \@lineup );
 
-	#                    OT  OG  CR  OG  OT  LB  LB  LB  TE  KR  KR
-	printf $output ".LR %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d\n",
-	$players[14]->[0],
-	$players[17]->[0],
-	$players[20]->[0],
-	$players[18]->[0],
-	$players[15]->[0],
-	$players[31]->[0],
-	$players[32]->[0],
-	$players[33]->[0],
-	$players[11]->[0],
-	$ret_back->[   0],
-	$returner->[   0];
+    my @lineup = @{ select_punt_return_lineup( \@players ) };
 
-	#                    CB  LB  DE  DT  DT  DE  LB  CB  DB  DB  KR
-	printf $output ".LQ %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d\n",
-	($returner->[0] != $players[36]->[0]) ? $players[36]->[0] : $players[38]->[0],
-	$players[31]->[0],
-	$players[27]->[0],
-	$players[23]->[0],
-	$players[24]->[0],
-	$players[28]->[0],
-	$players[32]->[0],
-	$players[37]->[0],
-	($returner->[0] != $players[40]->[0]) ? $players[40]->[0] : $players[42]->[0],
-	$players[41]->[0],
-	$returner->[   0];
-    }
+    print_lineup( ".LQ", \@lineup );
 
-    #                    TE  OT  OG  CR  OG  OT  TE  FB  FB  QB  KI
-    printf $output ".LF %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d %2d\n",
-    $players[12]->[0],
-    $players[14]->[0],
-    $players[17]->[0],
-    $players[20]->[0],
-    $players[18]->[0],
-    $players[15]->[0],
-    $players[11]->[0],
-    $players[ 5]->[0],
-    $players[ 6]->[0],
-    $players[ 2]->[0],
-    $kicker->[     0];
+    my @lineup = @{ select_fieldgoal_lineup( \@players, $kicker ) };
+
+    print_lineup( ".LF", \@lineup );
 
     print $output ".EN\n";
 
@@ -657,7 +1067,7 @@ foreach $team_abbr (sort keys %teams) {
 
     @team_values = @{ $teams{$team_abbr} };
 
-    generate_team( \@team_values );
+    update_team( \@team_values );
 }
 
 open( $output, ">$namesfile" ) || die "Cannot open names file <$namesfile> for writing.\n";
