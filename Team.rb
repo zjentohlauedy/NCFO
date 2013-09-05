@@ -80,8 +80,8 @@ class Team
   end
 
   class Player
-    attr_reader   :name, :position, :punt_distance, :fg_accuracy
-    attr_accessor :number, :rating, :year
+    attr_reader   :name, :punt_distance, :fg_accuracy
+    attr_accessor :number, :position, :rating, :year
 
     def initialize( number, name, position, rating, year )
       @number   = number
@@ -94,7 +94,8 @@ class Team
       @fg_accuracy   = nil
 
       @pos_heirarchy = { 'OT' =>  6, 'OG' =>  7, 'CR' =>  8, 'TE' =>  5, 'WR' =>  4, 'HB' =>  2, 'FB' =>  3, 'QB' =>  1,
-                         'DE' => 10, 'DT' =>  9, 'NT' =>  9, 'LB' => 11, 'CB' => 12, 'DB' => 13, 'KI' => 14, 'PU' => 14 }
+                         'DE' => 10, 'DT' =>  9, 'NT' =>  9, 'LB' => 11, 'CB' => 12, 'DB' => 13, 'KI' => 14, 'PU' => 14,
+                         'DL' => 11 }
     end
 
     def is_running_back
@@ -261,24 +262,22 @@ class Team
 
     init_rating_scale
 
-    @defense          = (@generator.rand( 100 ) >= 50) ? 43 : 34
     @kicking.attempts =  @generator.rand( 31 ) + 20
 
-    positions = [ "CB", "CB", "CB", "CB", "CR", "CR", "CR", "DB", "DB", "DB", "DE", "DE", "DE",
-                  "FB", "FB", "HB", "HB", "LB", "LB", "LB", "LB", "LB", "OG", "OG", "OG", "OT",
-                  "OT", "OT", "QB", "QB", "QB", "TE", "TE", "TE", "WR", "WR", "WR", "WR" ]
+    positions = [ "CB", "CB", "CB", "CB", "CR", "CR", "CR", "DB", "DB", "DB",
+                  "FB", "FB", "HB", "HB", "OG", "OG", "OG", "OT", "OT", "OT",
+                  "QB", "QB", "QB", "TE", "TE", "TE", "WR", "WR", "WR", "WR" ]
 
-    if @defense == 34
-      positions += [ "LB", "LB", "NT", "NT", "NT" ]
-    else
-      positions += [ "DE", "DT", "DT", "DT", "DT" ]
-    end
+    positions += [ "DL", "DL", "DL", "DL", "DL", "DL", "DL", "DL" ]
+    positions += [ "LB", "LB", "LB", "LB", "LB", "LB", "LB" ]
 
     positions += [ "KI", "PU" ]
 
     positions.each do |pos|
       @players.push generate_player( player_names.pop, pos )
     end
+
+    determine_defense
 
     @players.sort!
   end
@@ -328,6 +327,7 @@ class Team
       when "DB" then @generator.rand( 10 ) + 40
       when "KI" then @generator.rand( 19 ) +  1
       when "PU" then @generator.rand( 19 ) +  1
+      when "DL" then @generator.rand( 10 ) + 90
       end
 
       @players.each do |player|
@@ -373,6 +373,12 @@ class Team
 
     @new_players = Array.new
     @players.each do |player|
+      if  player.position == "DE" or
+          player.position == "DT" or
+          player.position == "NT"
+        player.position = "DL"
+      end
+
       if player.year == "Senior"
         player.number = 0
         @new_players.push generate_player( player_names.pop, player.position, "Freshman" )
@@ -382,8 +388,19 @@ class Team
       end
     end
 
-    @players     = @new_players.sort
-    @new_players = Array.new
+    if @defense == 34
+      @new_players.push generate_player( player_names.pop, "DL", "Freshman" )
+      @new_players.push generate_player( player_names.pop, "DL", "Freshman" )
+    else
+      @new_players.push generate_player( player_names.pop, "LB", "Freshman" )
+      @new_players.push generate_player( player_names.pop, "LB", "Freshman" )
+    end
+
+    @players = @new_players
+
+    determine_defense
+
+    @players.sort!
   end
 
   def graduate_player( player )
@@ -410,6 +427,59 @@ class Team
       player.set_punt_distance
       @punting.player  = player
       @punting.average = player.punt_distance
+    end
+  end
+
+  def determine_defense
+    linesmen    = @players.select { |player| player.position == "DL" }
+    linebackers = @players.select { |player| player.position == "LB" }
+
+    dls = 0
+    lbs = 0
+
+    (linesmen + linebackers).sort.each do |player|
+      if player.position == "DL"
+        dls += 1
+      end
+
+      if player.position == "LB"
+        lbs += 1
+      end
+
+      if dls > 3 or lbs > 3
+        break
+      end
+    end
+
+    linesmen.sort!
+    linebackers.sort!
+
+    if dls == 4
+      @defense = 43
+
+      linesmen[0].position = "DT"
+      linesmen[1].position = "DE"
+      linesmen[2].position = "DT"
+      linesmen[3].position = "DE"
+      linesmen[4].position = "DT"
+      linesmen[5].position = "DE"
+      linesmen[6].position = "DT"
+      linesmen[7].position = "DE"
+
+      @players.delete linebackers[5]
+      @players.delete linebackers[6]
+    else
+      @defense = 34
+
+      linesmen[0].position = "NT"
+      linesmen[1].position = "DE"
+      linesmen[2].position = "DE"
+      linesmen[3].position = "NT"
+      linesmen[4].position = "DE"
+      linesmen[5].position = "NT"
+
+      @players.delete linesmen[6]
+      @players.delete linesmen[7]
     end
   end
 
@@ -775,7 +845,7 @@ class Team
       end
     end
 
-    rbs.sort!
+    rbs.sort! { |a,b| b.rating <=> a.rating }
     wrs.sort!
 
     rbs.slice! 2..-1
